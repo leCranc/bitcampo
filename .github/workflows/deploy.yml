@@ -7,6 +7,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       pages: write
@@ -16,26 +17,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
-        run: cd bitcampo && npm install
+        run: npm install
 
       - name: Build
-        run: cd bitcampo && npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+        run: npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'bitcampo/dist'
+          path: 'dist/'
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
+
+   deploy:
+     needs: build_site
+     runs-on: ubuntu-latest
+     environment:
+       name: github-pages
+       url: ${{ steps.deployment.outputs.page_url }}
+     steps:
+       - name: Deploy to GitHub Pages
+         id: deployment
+         uses: actions/deploy-pages@v4
