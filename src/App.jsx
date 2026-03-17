@@ -30,10 +30,12 @@ import {
 import { firebaseConfig } from './firebaseConfig.js';
 
 // --- CONFIGURACIÓN FIREBASE ---
+import { firebaseConfig, appId } from './firebaseConfig';
+
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'campogest-v18-pro';
+const auth = getAuth
+const db = getFirestore(app)gtibit();
+
 
 // --- CONSTANTES ---
 const DEFAULT_CATS = [
@@ -894,9 +896,11 @@ export default function App() {
     } catch (e) {
       console.warn("Google Login bloqueado por seguridad del entorno:", e.message);
       if (e.code === 'auth/unauthorized-domain') {
-        setLoginError("Google bloquea el inicio de sesión en este entorno de prueba. Por favor, usa 'Continuar como Invitado'.");
+        setLoginError("Este dominio no está autorizado en Firebase. Configura lecranc.github.io en Firebase Console > Authentication > Authorized domains.");
+      } else if (e.code === 'auth/popup-closed-by-user') {
+        setLoginError("Cerraste la ventana de login. Intenta de nuevo.");
       } else {
-        setLoginError("Ocurrió un error al iniciar sesión.");
+        setLoginError("Ocurrió un error al iniciar sesión: " + e.message);
       }
     } finally {
       setAuthLoading(false);
